@@ -5,7 +5,7 @@ export default function LootSplitter() {
   const [players, setPlayers] = useState([""]);
   const [lootAmount, setLootAmount] = useState("");
   const [repairCost, setRepairCost] = useState("");
-  const [commission, setCommission] = useState("");
+  const [sellPercent, setSellPercent] = useState("");
 
   const addPlayer = () => {
     setPlayers([...players, ""]);
@@ -27,18 +27,22 @@ export default function LootSplitter() {
     return Math.round(num / 2) * 2;
   };
 
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
   const calculateSplit = () => {
     const loot = parseFloat(lootAmount) || 0;
     const repair = parseFloat(repairCost) || 0;
-    const comm = parseFloat(commission) || 0;
+    const sell = parseFloat(sellPercent) || 0;
 
     const activePlayers = players.filter((p) => p.trim() !== "");
     if (activePlayers.length === 0) return null;
 
     const afterRepair = loot - repair;
-    const commissionAmount = (afterRepair * comm) / 100;
-    const afterCommission = afterRepair - commissionAmount;
-    const perPlayer = afterCommission / activePlayers.length;
+    const sellAmount = (afterRepair * sell) / 100;
+    const afterSell = afterRepair - sellAmount;
+    const perPlayer = afterSell / activePlayers.length;
     const perPlayerRounded = roundToEven(perPlayer);
 
     return {
@@ -46,9 +50,9 @@ export default function LootSplitter() {
       loot,
       repair,
       afterRepair,
-      commission: comm,
-      commissionAmount,
-      afterCommission,
+      sellPercent: sell,
+      sellAmount,
+      afterSell,
       perPlayer: perPlayerRounded,
     };
   };
@@ -134,13 +138,14 @@ export default function LootSplitter() {
             <div className="flex items-center gap-2 mb-2">
               <Percent className="text-yellow-400" size={20} />
               <label className="text-sm font-semibold text-purple-200">
-                Commission (%)
+                Sell Percent{" "}
+                <span className="text-slate-400 font-normal">(optional)</span>
               </label>
             </div>
             <input
               type="number"
-              value={commission}
-              onChange={(e) => setCommission(e.target.value)}
+              value={sellPercent}
+              onChange={(e) => setSellPercent(e.target.value)}
               placeholder="0"
               className="w-full px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
             />
@@ -156,33 +161,33 @@ export default function LootSplitter() {
                 <div className="flex justify-between text-slate-300">
                   <span>Loot:</span>
                   <span className="font-semibold">
-                    {result.loot.toFixed(2)}
+                    {formatNumber(result.loot.toFixed(0))}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-300">
                   <span>Repair:</span>
                   <span className="font-semibold text-red-400">
-                    -{result.repair.toFixed(2)}
+                    -{formatNumber(result.repair.toFixed(0))}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-300 border-t border-purple-500/20 pt-2">
                   <span>After Repair:</span>
                   <span className="font-semibold">
-                    {result.afterRepair.toFixed(2)}
+                    {formatNumber(result.afterRepair.toFixed(0))}
                   </span>
                 </div>
-                {result.commission > 0 && (
+                {result.sellPercent > 0 && (
                   <>
                     <div className="flex justify-between text-slate-300">
-                      <span>Commission ({result.commission}%):</span>
+                      <span>Sell Percent ({result.sellPercent}%):</span>
                       <span className="font-semibold text-yellow-400">
-                        -{result.commissionAmount.toFixed(2)}
+                        -{formatNumber(result.sellAmount.toFixed(0))}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-300 border-t border-purple-500/20 pt-2">
-                      <span>After Commission:</span>
+                      <span>After Sell:</span>
                       <span className="font-semibold">
-                        {result.afterCommission.toFixed(2)}
+                        {formatNumber(result.afterSell.toFixed(0))}
                       </span>
                     </div>
                   </>
@@ -195,7 +200,7 @@ export default function LootSplitter() {
                     Per Player (Rounded to Even)
                   </div>
                   <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
-                    {result.perPlayer}
+                    {formatNumber(result.perPlayer)}
                   </div>
                 </div>
               </div>
@@ -211,7 +216,7 @@ export default function LootSplitter() {
                   >
                     <span className="text-slate-200">{player}</span>
                     <span className="text-green-400 font-semibold">
-                      {result.perPlayer}
+                      {formatNumber(result.perPlayer)}
                     </span>
                   </div>
                 ))}
