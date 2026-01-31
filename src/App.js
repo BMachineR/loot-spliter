@@ -6,6 +6,25 @@ export default function LootSplitter() {
   const [lootAmount, setLootAmount] = useState("");
   const [repairCost, setRepairCost] = useState("");
   const [sellPercent, setSellPercent] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+
+  const playerNames = [
+    "missvalentine",
+    "lbavovna",
+    "havi9",
+    "vladnik95",
+    "alphadedus",
+    "foxmuvi",
+    "looooooooooool",
+    "lucky103",
+    "JamesMoriarty",
+    "bdjilka",
+    "kr1ki45legenda",
+    "ggmaker",
+    "elcolonei90",
+    "tubs02",
+  ];
 
   const addPlayer = () => {
     setPlayers([...players, ""]);
@@ -21,6 +40,26 @@ export default function LootSplitter() {
     const newPlayers = [...players];
     newPlayers[index] = value;
     setPlayers(newPlayers);
+
+    // Show suggestions if value is not empty
+    if (value.trim()) {
+      const filtered = playerNames.filter((name) =>
+        name.toLowerCase().includes(value.toLowerCase()),
+      );
+      setSuggestions(filtered);
+      setActiveSuggestionIndex(index);
+    } else {
+      setSuggestions([]);
+      setActiveSuggestionIndex(-1);
+    }
+  };
+
+  const selectSuggestion = (index, name) => {
+    const newPlayers = [...players];
+    newPlayers[index] = name;
+    setPlayers(newPlayers);
+    setSuggestions([]);
+    setActiveSuggestionIndex(-1);
   };
 
   const roundToEven = (num) => {
@@ -75,14 +114,36 @@ export default function LootSplitter() {
               </label>
             </div>
             {players.map((player, index) => (
-              <div key={index} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={player}
-                  onChange={(e) => updatePlayer(index, e.target.value)}
-                  placeholder={`Player ${index + 1}`}
-                  className="flex-1 px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
-                />
+              <div key={index} className="flex gap-2 mb-2 relative">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={player}
+                    onChange={(e) => updatePlayer(index, e.target.value)}
+                    onBlur={() =>
+                      setTimeout(() => {
+                        setSuggestions([]);
+                        setActiveSuggestionIndex(-1);
+                      }, 200)
+                    }
+                    placeholder={`Player ${index + 1}`}
+                    className="w-full px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
+                  />
+                  {suggestions.length > 0 &&
+                    activeSuggestionIndex === index && (
+                      <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-purple-500/30 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+                        {suggestions.map((name, i) => (
+                          <div
+                            key={i}
+                            onClick={() => selectSuggestion(index, name)}
+                            className="px-4 py-2 hover:bg-purple-500/20 cursor-pointer text-white transition"
+                          >
+                            {name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                </div>
                 {players.length > 1 && (
                   <button
                     onClick={() => removePlayer(index)}
