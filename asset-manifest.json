@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/loot-spliter/static/css/main.31d6cfe0.css",
-    "main.js": "/loot-spliter/static/js/main.99062ceb.js",
+    "main.js": "/loot-spliter/static/js/main.8a8cda2c.js",
     "static/js/453.7e120261.chunk.js": "/loot-spliter/static/js/453.7e120261.chunk.js",
     "index.html": "/loot-spliter/index.html",
-    "main.99062ceb.js.map": "/loot-spliter/static/js/main.99062ceb.js.map",
+    "main.8a8cda2c.js.map": "/loot-spliter/static/js/main.8a8cda2c.js.map",
     "453.7e120261.chunk.js.map": "/loot-spliter/static/js/453.7e120261.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.31d6cfe0.css",
-    "static/js/main.99062ceb.js"
+    "static/js/main.8a8cda2c.js"
   ]
 }
