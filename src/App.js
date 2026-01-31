@@ -70,10 +70,22 @@ export default function LootSplitter() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
+  const formatInputValue = (value) => {
+    // Remove all non-digit characters
+    const digits = value.replace(/\D/g, "");
+    // Format with dots
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
+  const handleNumberInput = (value, setter) => {
+    const formatted = formatInputValue(value);
+    setter(formatted);
+  };
+
   const calculateSplit = () => {
-    const loot = parseFloat(lootAmount) || 0;
-    const repair = parseFloat(repairCost) || 0;
-    const sell = parseFloat(sellPercent) || 0;
+    const loot = parseFloat(lootAmount.replace(/\./g, "")) || 0;
+    const repair = parseFloat(repairCost.replace(/\./g, "")) || 0;
+    const sell = parseFloat(sellPercent.replace(/\./g, "")) || 0;
 
     const activePlayers = players.filter((p) => p.trim() !== "");
     if (activePlayers.length === 0) return null;
@@ -181,10 +193,10 @@ export default function LootSplitter() {
               </label>
             </div>
             <input
-              type="number"
+              type="text"
               value={lootAmount}
-              onChange={(e) => setLootAmount(e.target.value)}
-              placeholder="1000"
+              onChange={(e) => handleNumberInput(e.target.value, setLootAmount)}
+              placeholder="1.000"
               className="w-full px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
             />
           </div>
@@ -197,9 +209,9 @@ export default function LootSplitter() {
               </label>
             </div>
             <input
-              type="number"
+              type="text"
               value={repairCost}
-              onChange={(e) => setRepairCost(e.target.value)}
+              onChange={(e) => handleNumberInput(e.target.value, setRepairCost)}
               placeholder="0"
               className="w-full px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
             />
@@ -214,9 +226,11 @@ export default function LootSplitter() {
               </label>
             </div>
             <input
-              type="number"
+              type="text"
               value={sellPercent}
-              onChange={(e) => setSellPercent(e.target.value)}
+              onChange={(e) =>
+                handleNumberInput(e.target.value, setSellPercent)
+              }
               placeholder="0"
               className="w-full px-4 py-2 bg-slate-700/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
             />
